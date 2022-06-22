@@ -1,7 +1,12 @@
 from abc import ABC, abstractmethod
+from pyometer import MetricRegistry
 
 
 class Reporter(ABC):
+
+    def __init__(self, registry: MetricRegistry):
+        self.registry = registry
+
     @abstractmethod
     def report(self):
         pass

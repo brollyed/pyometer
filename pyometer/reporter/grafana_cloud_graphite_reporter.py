@@ -21,7 +21,7 @@ class GrafanaCloudGraphiteReporter(Reporter):
                  instance_id: str,
                  api_key: str,
                  clock=None):
-        self.registry = registry
+        super().__init__(registry)
         self.metrics_url = metrics_url
         self.instance_id = instance_id
         self.api_key = api_key

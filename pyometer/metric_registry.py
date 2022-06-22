@@ -1,6 +1,7 @@
 from typing import List, Tuple, Any, Dict
 
 from pyometer.metric import Metric
+from pyometer.metric.run_timer import RunTimer
 from pyometer.metric_value import MetricValue
 
 
@@ -23,6 +24,9 @@ class MetricRegistry:
         if tags is not None:
             self._tags[name] = tags
         return metric
+
+    def run_timer(self, name: Tuple, tags: Dict[str, Any]) -> RunTimer:
+        return self.add_metric(name=name, metric=RunTimer(), tags=tags)
 
     def all_metric_values(self) -> List[MetricValue]:
         metric_values = []
