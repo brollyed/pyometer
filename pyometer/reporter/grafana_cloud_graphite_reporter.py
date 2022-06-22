@@ -5,12 +5,14 @@ import urllib.request
 import urllib.parse
 import json
 from pyometer.metric_registry import MetricRegistry
+from pyometer.metric_value import MetricValue
 from pyometer.reporter import Reporter
 
 
 class GrafanaCloudGraphiteReporter(Reporter):
     """
     Report metrics to a hosted Grafana Cloud Graphite instance.
+    See https://grafana.com/docs/grafana-cloud/metrics-graphite/http-api/
     """
 
     def __init__(self,
@@ -28,30 +30,42 @@ class GrafanaCloudGraphiteReporter(Reporter):
     def report(self):
         metrics_data = self._collect_metrics()
         if metrics_data:
-            request = self._build_request()
+            request = self._build_request(metrics_data)
             with urllib.request.urlopen(request) as response:
                 logging.debug(f"Metrics published to {self.metrics_url}; response code={response.code}; message={response.msg}")
 
     def _collect_metrics(self) -> List[Dict]:
         timestamp = int(round(self.clock.time()))
-        metrics = self.registry.dump_metrics()
-        metrics_values = []
-        for key in metrics.keys():
-            for value_key in metrics[key].keys():
-                metrics_values.append({
-                    "name": f"{key}.{value_key}",
-                    "interval": 1,  # TODO
-                    "value": metrics[key][value_key],
-                    "time": timestamp,
-                    "tags": None
-                })
+        metric_values = self.registry.all_metric_values()
+        metric_data = []
+        for metric_value in metric_values:
+            metric_data.append({
+                "name": self._format_metric_name(metric_value),
+                "interval": 1,  # TODO
+                "value": metric_value.value,
+                "time": timestamp,
+                "tags": self._format_metric_tags(metric_value)
+            })
 
-        return metrics_values
+        return json.dumps(metric_data).encode("UTF-8")
 
-    def _build_request(self, metrics_data: List[Dict]):
+    @staticmethod
+    def _format_metric_name(metric_value: MetricValue):
+        return ".".join([str(part) for part in metric_value.name])
+
+    @staticmethod
+    def _format_metric_tags(metric_value: MetricValue):
+        if metric_value.tags is None:
+            return None
+        metric_tags = []
+        for tag_name, tag_value in metric_value.tags.items():
+            metric_tags.append(f"{tag_name}={tag_value}")
+        return metric_tags
+
+    def _build_request(self, metric_data: str):
         return urllib.request.Request(url=self.metrics_url,
                                       headers={
                                           "Authorization": f"Bearer {self.instance_id}:{self.api_key}",
                                           "Content-Type": "application/json"
                                       },
-                                      data=json.dumps(metrics_data).encode("UTF-8"))
+                                      data=metric_data)
