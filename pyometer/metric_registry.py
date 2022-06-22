@@ -28,8 +28,9 @@ class MetricRegistry:
             metric = self._metrics[name]
             for value_name, value in metric.metric_values().items():
                 full_name = (self.base_name if self.base_name is not None else ()) + name + (value_name,)
-                metric_values.append(
-                    MetricValue(name=full_name,
-                                tags=tags,
-                                value=value))
+                if value is not None:
+                    metric_values.append(
+                        MetricValue(name=full_name,
+                                    tags=tags,
+                                    value=value))
         return metric_values

@@ -1,6 +1,5 @@
 from abc import abstractmethod
 from typing import Callable, Any, Dict
-
 from pyometer.metric import Metric
 
 
@@ -22,7 +21,7 @@ class CallbackGauge(Gauge):
 
 
 class ValueGauge(Gauge):
-    def __init__(self, value=float("nan")):
+    def __init__(self, value=None):
         self.value = value
 
     def get_value(self):
