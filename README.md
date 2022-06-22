@@ -16,13 +16,19 @@ registry = MetricRegistry(base_name=("foo", "bar"))
 gauge = registry.add_metric(name=("baz", "queue_size"), metric=ValueGauge())
 gauge.set_value(100)
 
-
 # Automatically pull the value of a gauge with CallbackGauge
 def get_queue_size():
     return 4
 gauge = registry.add_metric(name=("baz", "queue_size"), metric=CallbackGauge(callback=get_queue_size))
 
 
-reporter = GrafanaCloudGraphiteReporter
+# Create a reporter for a Grafana-hosted Graphite instance
+reporter = GrafanaCloudGraphiteReporter(registry=registry,
+                                        metrics_url="<metrics url>",
+                                        instance_id="<instance id>",
+                                        api_key="<api key>")
+
+# Manually push metrics
+reporter.report()
 
 ```
