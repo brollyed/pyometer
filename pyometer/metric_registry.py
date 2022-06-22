@@ -1,7 +1,10 @@
 from typing import List, Tuple, Any, Dict
-from pyometer.metric_value import MetricValue
-from pyometer.metric.gauge import Gauge
 
+from pyometer.metric import Metric
+from pyometer.metric_value import MetricValue
+
+
+# TODO tags should be considered as a part of the unique identifier of a metric
 
 class MetricRegistry:
     def __init__(self,
@@ -10,16 +13,16 @@ class MetricRegistry:
         self._metrics = {}
         self._tags = {}
 
-    def add_gauge(self,
-                  name: Tuple,
-                  gauge: Gauge,
-                  tags: Dict[str, Any] = None) -> Gauge:
+    def add_metric(self,
+                   name: Tuple,
+                   metric: Metric,
+                   tags: Dict[str, Any] = None) -> Metric:
         if name in self._metrics:
-            raise ValueError(f"Gauge already exists for name: {name}")
-        self._metrics[name] = gauge
+            raise ValueError(f"Metric already exists for name: {name}")
+        self._metrics[name] = metric
         if tags is not None:
             self._tags[name] = tags
-        return gauge
+        return metric
 
     def all_metric_values(self) -> List[MetricValue]:
         metric_values = []
