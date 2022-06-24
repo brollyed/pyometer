@@ -67,6 +67,6 @@ class MetricRegistry:
             temp_metric_key = self._base_key.extend(metric_key)
             for value_name, value in metric.metric_values().items():
                 if value is not None:
-                    full_metric_key = temp_metric_key.extend_name(value_name)
+                    full_metric_key = temp_metric_key.extend_name((value_name,))
                     metric_values.append(MetricValue(key=full_metric_key, value=value))
         return metric_values
