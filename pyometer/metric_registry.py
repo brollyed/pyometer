@@ -1,5 +1,6 @@
 from typing import List, Callable, Dict
 
+from metric import Counter
 from pyometer import MetricKey
 from pyometer.metric import Metric, ValueGauge, CallbackGauge
 from pyometer.metric.timer import Timer
@@ -54,6 +55,16 @@ class MetricRegistry:
         """
         if key not in self._metrics:
             self._metrics[key] = Timer()
+        return self._metrics[key]
+
+    def counter(self, key: MetricKey) -> Counter:
+        """
+        Create or get a Counter.
+        :param key:
+        :return:
+        """
+        if key not in self._metrics:
+            self._metrics[key] = Counter()
         return self._metrics[key]
 
     def all_metric_values(self) -> List[MetricValue]:
