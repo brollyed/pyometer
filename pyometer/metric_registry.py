@@ -64,7 +64,7 @@ class MetricRegistry:
         metric_values = []
         for metric_key in self._metrics.keys():
             metric = self._metrics[metric_key]
-            temp_metric_key = self._base_key.extend(metric_key)  # TODO find better name
+            temp_metric_key = self._base_key.extend(metric_key)
             for value_name, value in metric.metric_values().items():
                 if value is not None:
                     full_metric_key = temp_metric_key.extend_name(value_name)
