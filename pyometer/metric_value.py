@@ -1,11 +1,11 @@
-from typing import Any, Dict, Tuple
+from typing import Any
+
+from pyometer import MetricKey
 
 
 class MetricValue:
     def __init__(self,
-                 name: Tuple,
-                 tags: Dict[str, Any],
+                 key: MetricKey,
                  value: Any):
-        self.name = name
-        self.tags = tags
+        self.key = key
         self.value = value

@@ -1,77 +1,60 @@
-from typing import List, Tuple, Any, Dict, Callable
+from typing import List, Callable, Dict
 
+from pyometer import MetricKey
 from pyometer.metric import Metric, ValueGauge, CallbackGauge
 from pyometer.metric.timer import Timer
 from pyometer.metric_value import MetricValue
 
 
-# TODO tags should be considered as a part of the unique identifier of a metric
-
 class MetricRegistry:
     def __init__(self,
-                 base_name: Tuple = None):
-        self.base_name = base_name
-        self._metrics = {}
-        self._tags = {}
+                 base_key: MetricKey):
+        self._base_key = base_key
+        self._metrics: Dict[MetricKey, Metric] = {}
 
-    def register(self,
-                 name: Tuple,
-                 metric: Metric,
-                 tags: Dict[str, Any] = None) -> Metric:
+    def register(self, key: MetricKey, metric: Metric) -> Metric:
         """
         Register a new metric with the registry.
-        :param name:
+        :param key:
         :param metric:
-        :param tags:
         :return:
         """
-        if name in self._metrics:
-            raise ValueError(f"Metric already exists for name: {name}")
-        self._metrics[name] = metric
-        if tags is not None:
-            self._tags[name] = tags
+        if key in self._metrics:
+            raise ValueError(f"Metric already exists for key: {key}")
+        self._metrics[key] = metric
         return metric
 
-    def value_gauge(self, name: Tuple, tags: Dict[str, Any] = None, default=None) -> ValueGauge:
+    def value_gauge(self, key: MetricKey, default=None) -> ValueGauge:
         """
         Create or get a ValueGauge.
-        :param name:
-        :param tags:
+        :param key:
         :param default:
         :return:
         """
-        if name not in self._metrics:
-            self._metrics[name] = ValueGauge(value=default)
-            if tags is not None:
-                self._tags[name] = tags
-        return self._metrics[name]
+        if key not in self._metrics:
+            self._metrics[key] = ValueGauge(value=default)
+        return self._metrics[key]
 
-    def callback_gauge(self, name: Tuple, tags: Dict[str, Any] = None, callback: Callable = None) -> CallbackGauge:
+    def callback_gauge(self, key: MetricKey, callback: Callable = None) -> CallbackGauge:
         """
         Create or get a CallbackGauge.
-        :param name:
-        :param tags:
+        :param key:
         :param callback:
         :return:
         """
-        if name not in self._metrics:
-            self._metrics[name] = CallbackGauge(callback=callback)
-            if tags is not None:
-                self._tags[name] = tags
-        return self._metrics[name]
+        if key not in self._metrics:
+            self._metrics[key] = CallbackGauge(callback=callback)
+        return self._metrics[key]
 
-    def timer(self, name: Tuple, tags: Dict[str, Any] = None) -> Timer:
+    def timer(self, key: MetricKey) -> Timer:
         """
         Create or get a Timer.
-        :param name:
-        :param tags:
+        :param key:
         :return:
         """
-        if name not in self._metrics:
-            self._metrics[name] = Timer()
-            if tags is not None:
-                self._tags[name] = tags
-        return self._metrics[name]
+        if key not in self._metrics:
+            self._metrics[key] = Timer()
+        return self._metrics[key]
 
     def all_metric_values(self) -> List[MetricValue]:
         """
@@ -79,14 +62,11 @@ class MetricRegistry:
         :return:
         """
         metric_values = []
-        for name in self._metrics.keys():
-            tags = self._tags[name] if name in self._tags else None
-            metric = self._metrics[name]
+        for metric_key in self._metrics.keys():
+            metric = self._metrics[metric_key]
+            temp_metric_key = self._base_key.extend(metric_key)  # TODO find better name
             for value_name, value in metric.metric_values().items():
-                full_name = (self.base_name if self.base_name is not None else ()) + name + (value_name,)
                 if value is not None:
-                    metric_values.append(
-                        MetricValue(name=full_name,
-                                    tags=tags,
-                                    value=value))
+                    full_metric_key = temp_metric_key.extend_name(value_name)
+                    metric_values.append(MetricValue(key=full_metric_key, value=value))
         return metric_values

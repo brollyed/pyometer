@@ -1,22 +1,20 @@
 import asyncio
 import functools
-from typing import Dict, Tuple
 import time
-from pyometer import MetricRegistry
+
+from pyometer import MetricRegistry, MetricKey
 
 SUCCESS_METRIC = "success"
 FAILURE_METRIC = "failure"
 
 
 def timer(registry: MetricRegistry,
-          name: Tuple,
-          tags: Dict[str, str] = None,
+          key: MetricKey,
           clock=time):
     """
     Function decorator to track the execution time of a function and store the results in a Timer.
     :param registry: MetricRegistry for storing results
-    :param name: base name of the timer metric
-    :param tags: tags of the timer metric
+    :param key: base key of the timer metric
     :param clock: clock to use for gathering time information
     :return:
     """
@@ -25,7 +23,7 @@ def timer(registry: MetricRegistry,
 
         def update_result(start_time: float, result: str):
             elapsed_time = clock.time() - start_time
-            timer_metric = registry.timer(name=name + (result,), tags=tags)
+            timer_metric = registry.timer(key.extend_name((result,)))
             timer_metric.update(elapsed_time)
 
         @functools.wraps(func)

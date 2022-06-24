@@ -5,7 +5,7 @@ Python 3 metrics inspired by [Dropwizard Metrics](https://metrics.dropwizard.io/
 ## Examples
 
 ### MetricRegistry
-
+### TODO update all with key stuff
 ```python
 from pyometer import MetricRegistry
 

@@ -11,4 +11,4 @@ class ConsoleReporter(Reporter):
         metric_values = self.registry.all_metric_values()
         print("### ConsoleReporter - Metric Values ###")
         for metric_value in metric_values:
-            print(f"# name={metric_value.name}; tags={metric_value.tags}; value={metric_value.value}")
+            print(f"# key={metric_value.key}; value={metric_value.value}")

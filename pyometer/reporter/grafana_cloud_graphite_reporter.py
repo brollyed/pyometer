@@ -51,14 +51,14 @@ class GrafanaCloudGraphiteReporter(Reporter):
 
     @staticmethod
     def _format_metric_name(metric_value: MetricValue):
-        return ".".join([str(part) for part in metric_value.name])
+        return ".".join([str(part) for part in metric_value.key.name])
 
     @staticmethod
     def _format_metric_tags(metric_value: MetricValue):
-        if metric_value.tags is None:
+        if metric_value.key.tags is None:
             return None
         metric_tags = []
-        for tag_name, tag_value in metric_value.tags.items():
+        for tag_name, tag_value in metric_value.key.tags.items():
             metric_tags.append(f"{tag_name}={tag_value}")
         return metric_tags
 
