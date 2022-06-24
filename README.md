@@ -2,47 +2,69 @@
 
 Python 3 metrics inspired by [Dropwizard Metrics](https://metrics.dropwizard.io/)
 
-## Examples
+## Features
+
+### Metric Keys
+
+Metric keys are used to uniquely identify a single metric. They consist of a `name` (ordered tuple of values)
+and `tags` (dictionary of name/value pairs).
+
+```python
+from pyometer import metric_key
+
+# Metrics by name
+metric_key(name=("project", "metrics"))
+# Metrics by tag
+metric_key(tags={"env": "production"})
+# Metrics by name and tag
+metric_key(name=("project", "metrics"), tags={"env": "production"})
+```
 
 ### MetricRegistry
-### TODO update all with key stuff
+
 ```python
-from pyometer import MetricRegistry
+from pyometer import MetricRegistry, metric_key
 
 registry = MetricRegistry(
-    base_name=("foo", "bar")  # Metrics created with this registry will be prefixed with this name
+    # Metrics created with this registry will be prefixed with this name
+    base_key=metric_key(name=("project", "metrics"))
 )
 ```
 
 ### ValueGauge
 
 ```python
+from pyometer import metric_key
+
 # Manually set the value of a gauge with ValueGauge
-gauge = registry.value_gauge(name=("baz", "queue_size"), default=0)
+gauge = registry.value_gauge(key=metric_key(name=("queue_size",)), default=0)
 gauge.set_value(100)
 ```
 
 ### CallbackGauge
 
 ```python
+from pyometer import metric_key
+
+
 # Automatically pull the value of a gauge with CallbackGauge
 def get_queue_size():
     return 4
 
 
-gauge = registry.callback_gauge(name=("baz", "queue_size"), callback=get_queue_size)
+gauge = registry.callback_gauge(key=metric_key(name=("queue_size",)), callback=get_queue_size)
 ```
 
 ### Timer
 
 ```python
+from pyometer import metric_key
 from pyometer.decorator import timer
-import time
-import random
 
-@timer(registry=registry, name=("baz"))
-def do_hard_work():
-    time.sleep(random.randint(5, 10))
+
+@timer(registry=registry, key=metric_key(name=("get_users",)))
+def get_users():
+    pass  # ... long running task ...
 ```
 
 ### Reporters
