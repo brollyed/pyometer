@@ -5,14 +5,14 @@ from pyometer.metric import Metric
 
 class Timer(Metric):
     def __init__(self):
-        self._lock = Lock()
+        self.lock = Lock()
         self.total = 0.0
         self.max = None
         self.min = None
         self.count = 0
 
     def update(self, elapsed_time: float):
-        with self._lock:
+        with self.lock:
             self.total += elapsed_time
             if self.min is None or elapsed_time < self.min:
                 self.min = elapsed_time
