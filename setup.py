@@ -6,4 +6,4 @@ setup(name="pyometer",
       license='MIT',
       author="Jake Ward",
       url='https://github.com/AthlosEducation/pyometer',
-      packages=['pyometer', 'pyometer.metric', 'pyometer.reporter'])
+      packages=['pyometer', 'pyometer.metric', 'pyometer.reporter', 'pyometer.decorator'])
