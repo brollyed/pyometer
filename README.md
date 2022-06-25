@@ -61,10 +61,17 @@ gauge = registry.callback_gauge(key=metric_key(name=("queue_size",)), callback=g
 from pyometer import metric_key
 from pyometer.decorator import timer
 
-
 @timer(registry=registry, key=metric_key(name=("get_users",)))
 def get_users():
-    pass  # ... long running task ...
+    """ fetch users """
+```
+
+### Counter
+
+```python
+counter = registry.counter(key=metric_key(name=("created_users",)))
+counter.increment(4)
+counter.decrement(2)
 ```
 
 ### Reporters
