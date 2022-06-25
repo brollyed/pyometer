@@ -2,7 +2,7 @@ from typing import List, Callable, Dict
 
 from metric import Counter
 from pyometer import MetricKey, metric_key
-from pyometer.metric import Metric, ValueGauge, CallbackGauge
+from pyometer.metric import Metric, ValueGauge, SupplierGauge
 from pyometer.metric.timer import Timer
 from pyometer.metric_value import MetricValue
 
@@ -36,15 +36,15 @@ class MetricRegistry:
             self._metrics[key] = ValueGauge(value=initial_value)
         return self._metrics[key]
 
-    def callback_gauge(self, key: MetricKey, supplier: Callable = None) -> CallbackGauge:
+    def supplier_gauge(self, key: MetricKey, supplier: Callable = None) -> SupplierGauge:
         """
-        Create or get a CallbackGauge.
+        Create or get a SupplierGauge.
         :param key:
         :param supplier:
         :return:
         """
         if key not in self._metrics:
-            self._metrics[key] = CallbackGauge(supplier=supplier)
+            self._metrics[key] = SupplierGauge(supplier=supplier)
         return self._metrics[key]
 
     def timer(self, key: MetricKey) -> Timer:

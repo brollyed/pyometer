@@ -1,3 +1,3 @@
 from .metric import Metric
-from .gauge import Gauge, CallbackGauge, ValueGauge
+from .gauge import Gauge, SupplierGauge, ValueGauge
 from .counter import Counter

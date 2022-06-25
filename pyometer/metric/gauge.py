@@ -9,7 +9,7 @@ class Gauge(Metric):
         pass
 
 
-class CallbackGauge(Gauge):
+class SupplierGauge(Gauge):
     def __init__(self, supplier: Callable):
         self.supplier = supplier
 

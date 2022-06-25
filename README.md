@@ -41,18 +41,18 @@ gauge = registry.value_gauge(key=metric_key(name=("queue_size",)), initial_value
 gauge.set_value(100)
 ```
 
-### CallbackGauge
+### SupplierGauge
 
 ```python
 from pyometer import metric_key
 
 
-# Automatically pull the value of a gauge with CallbackGauge
+# Automatically pull the value of a gauge with SupplierGauge
 def get_queue_size():
     return 4
 
 
-gauge = registry.callback_gauge(key=metric_key(name=("queue_size",)), supplier=get_queue_size)
+gauge = registry.supplier_gauge(key=metric_key(name=("queue_size",)), supplier=get_queue_size)
 ```
 
 ### Timer
