@@ -1,7 +1,7 @@
 from typing import List, Callable, Dict
 
 from metric import Counter
-from pyometer import MetricKey
+from pyometer import MetricKey, metric_key
 from pyometer.metric import Metric, ValueGauge, CallbackGauge
 from pyometer.metric.timer import Timer
 from pyometer.metric_value import MetricValue
@@ -9,7 +9,7 @@ from pyometer.metric_value import MetricValue
 
 class MetricRegistry:
     def __init__(self,
-                 base_key: MetricKey):
+                 base_key: MetricKey = metric_key()):
         self._base_key = base_key
         self._metrics: Dict[MetricKey, Metric] = {}
 
@@ -25,26 +25,26 @@ class MetricRegistry:
         self._metrics[key] = metric
         return metric
 
-    def value_gauge(self, key: MetricKey, default=None) -> ValueGauge:
+    def value_gauge(self, key: MetricKey, initial_value=None) -> ValueGauge:
         """
         Create or get a ValueGauge.
         :param key:
-        :param default:
+        :param initial_value:
         :return:
         """
         if key not in self._metrics:
-            self._metrics[key] = ValueGauge(value=default)
+            self._metrics[key] = ValueGauge(value=initial_value)
         return self._metrics[key]
 
-    def callback_gauge(self, key: MetricKey, callback: Callable = None) -> CallbackGauge:
+    def callback_gauge(self, key: MetricKey, supplier: Callable = None) -> CallbackGauge:
         """
         Create or get a CallbackGauge.
         :param key:
-        :param callback:
+        :param supplier:
         :return:
         """
         if key not in self._metrics:
-            self._metrics[key] = CallbackGauge(callback=callback)
+            self._metrics[key] = CallbackGauge(supplier=supplier)
         return self._metrics[key]
 
     def timer(self, key: MetricKey) -> Timer:
@@ -78,6 +78,6 @@ class MetricRegistry:
             temp_metric_key = self._base_key.extend(metric_key)
             for value_name, value in metric.metric_values().items():
                 if value is not None:
-                    full_metric_key = temp_metric_key.extend_name((value_name,))
+                    full_metric_key = temp_metric_key.extend_name(value_name)
                     metric_values.append(MetricValue(key=full_metric_key, value=value))
         return metric_values

@@ -13,6 +13,8 @@ def timer(registry: MetricRegistry,
           clock=time):
     """
     Function decorator to track the execution time of a function and store the results in a Timer.
+    Creates extension metric keys/timers to tracks "success" and "failure" of the function calls.
+
     :param registry: MetricRegistry for storing results
     :param key: base key of the timer metric
     :param clock: clock to use for gathering time information

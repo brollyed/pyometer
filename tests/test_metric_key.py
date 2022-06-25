@@ -46,10 +46,10 @@ class TestMetricKey(TestCase):
     def test_extend(self):
         # Extend name
         self.assertEqual(metric_key(name=("foo", "bar", "baz")),
-                         metric_key(name=("foo", "bar")).extend(metric_key(name=("baz",))))
+                         metric_key(name=("foo", "bar")).extend(metric_key(name="baz")))
         # Extend name
         self.assertEqual(metric_key(name=("foo", "bar", "baz")),
-                         metric_key(name=("foo", "bar")).extend_name(("baz",)))
+                         metric_key(name=("foo", "bar")).extend_name("baz"))
         # Extend tags
         self.assertEqual(metric_key(tags={"foo": "bar", "baz": "xyz"}),
                          metric_key(tags={"foo": "bar"}).extend(metric_key(tags={"baz": "xyz"})))

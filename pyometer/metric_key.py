@@ -1,4 +1,4 @@
-from typing import Tuple, Any, Dict
+from typing import Tuple, Any, Dict, Union
 
 
 class MetricKey:
@@ -28,11 +28,11 @@ class MetricKey:
         return MetricKey(name=_extend_metric_name(self.name, other.name),
                          tags=_extend_metric_tags(self.tags, other.tags))
 
-    def extend_name(self, name: Tuple):
-        return self.extend(MetricKey(name=name))
+    def extend_name(self, name: Union[Tuple, str]):
+        return self.extend(metric_key(name=name))
 
     def extend_tags(self, tags: Dict[str, Any]):
-        return self.extend(MetricKey(tags=tags))
+        return self.extend(metric_key(tags=tags))
 
 
 def _extend_metric_name(base_name: Tuple, other_name: Tuple) -> Tuple:
@@ -46,6 +46,12 @@ def _extend_metric_tags(base_tags: Dict[str, Any], other_tags: Dict[str, Any]) -
     return tags
 
 
-def metric_key(name: Tuple[Any] = (),
+def metric_key(name: Union[Tuple[Any], str] = (),
                tags: Dict[str, Any] = {}) -> MetricKey:
+    if isinstance(name, str):
+        name = (name,)
+    if not isinstance(name, tuple):
+        raise ValueError("`name` must be of type `str` or `tuple`")
+    if not isinstance(tags, dict):
+        raise ValueError("`tags` must be of type `dict`")
     return MetricKey(name=name, tags=tags)

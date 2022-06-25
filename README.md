@@ -37,7 +37,7 @@ registry = MetricRegistry(
 from pyometer import metric_key
 
 # Manually set the value of a gauge with ValueGauge
-gauge = registry.value_gauge(key=metric_key(name=("queue_size",)), default=0)
+gauge = registry.value_gauge(key=metric_key(name=("queue_size",)), initial_value=0)
 gauge.set_value(100)
 ```
 
@@ -52,7 +52,7 @@ def get_queue_size():
     return 4
 
 
-gauge = registry.callback_gauge(key=metric_key(name=("queue_size",)), callback=get_queue_size)
+gauge = registry.callback_gauge(key=metric_key(name=("queue_size",)), supplier=get_queue_size)
 ```
 
 ### Timer

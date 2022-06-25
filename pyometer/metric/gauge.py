@@ -10,11 +10,11 @@ class Gauge(Metric):
 
 
 class CallbackGauge(Gauge):
-    def __init__(self, callback: Callable):
-        self.callback = callback
+    def __init__(self, supplier: Callable):
+        self.supplier = supplier
 
     def get_value(self):
-        return self.callback()
+        return self.supplier()
 
     def metric_values(self) -> Dict[str, Any]:
         return {"value": self.get_value()}
