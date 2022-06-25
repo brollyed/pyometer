@@ -6,21 +6,24 @@ Python 3 metrics inspired by [Dropwizard Metrics](https://metrics.dropwizard.io/
 
 ### Metric Keys
 
-Metric keys are used to uniquely identify a single metric. They consist of a `name` (ordered tuple of values)
-and `tags` (dictionary of name/value pairs).
+[Metric keys](pyometer/metric_key.py) are used to uniquely identify a single metric.
+They consist of a `name` (ordered tuple of values) and/or `tags` (dictionary of name/value pairs).
 
 ```python
 from pyometer import metric_key
 
 # Metrics by name
-metric_key(name=("project", "metrics"))
+key = metric_key(name=("project", "metrics"))
 # Metrics by tag
-metric_key(tags={"env": "production"})
+key = metric_key(tags={"env": "production"})
 # Metrics by name and tag
-metric_key(name=("project", "metrics"), tags={"env": "production"})
+key = metric_key(name=("project", "metrics"), tags={"env": "production"})
 ```
 
 ### MetricRegistry
+
+The [MetricRegistry](pyometer/metric_registry.py) is the central container of metrics for an application.
+It can be used to create or register metrics that will later be available to metric reporters.
 
 ```python
 from pyometer import MetricRegistry, metric_key
@@ -60,6 +63,7 @@ gauge = registry.supplier_gauge(key=metric_key(name=("queue_size",)), supplier=g
 ```python
 from pyometer import metric_key
 from pyometer.decorator import timer
+
 
 @timer(registry=registry, key=metric_key(name=("get_users",)))
 def get_users():
