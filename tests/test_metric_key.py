@@ -56,3 +56,6 @@ class TestMetricKey(TestCase):
         # Extend tags
         self.assertEqual(metric_key(tags={"foo": "bar", "baz": "xyz"}),
                          metric_key(tags={"foo": "bar"}).extend_tags({"baz": "xyz"}))
+
+    def test_bad_types(self):
+        self.assertRaises(ValueError, lambda: metric_key(name=5.5))
