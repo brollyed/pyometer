@@ -40,7 +40,7 @@ registry = MetricRegistry(
 from pyometer import metric_key
 
 # Manually set the value of a gauge with ValueGauge
-gauge = registry.value_gauge(key=metric_key(name=("queue_size",)), initial_value=0)
+gauge = registry.value_gauge(key=metric_key(name="queue_size"), initial_value=0)
 gauge.set_value(100)
 ```
 
@@ -55,7 +55,7 @@ def get_queue_size():
     return 4
 
 
-gauge = registry.supplier_gauge(key=metric_key(name=("queue_size",)), supplier=get_queue_size)
+gauge = registry.supplier_gauge(key=metric_key(name="queue_size"), supplier=get_queue_size)
 ```
 
 ### Timer
@@ -65,7 +65,7 @@ from pyometer import metric_key
 from pyometer.decorator import timer
 
 
-@timer(registry=registry, key=metric_key(name=("get_users",)))
+@timer(registry=registry, key=metric_key(name="get_users"))
 def get_users():
     """ fetch users """
 ```
@@ -73,7 +73,9 @@ def get_users():
 ### Counter
 
 ```python
-counter = registry.counter(key=metric_key(name=("created_users",)))
+from pyometer import metric_key
+
+counter = registry.counter(key=metric_key(name="created_users"))
 counter.increment(4)
 counter.decrement(2)
 ```
