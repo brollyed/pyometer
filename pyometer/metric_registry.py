@@ -1,8 +1,7 @@
 from typing import List, Callable, Dict
 
-from metric import Counter
 from pyometer import MetricKey, metric_key
-from pyometer.metric import Metric, ValueGauge, SupplierGauge
+from pyometer.metric import Metric, ValueGauge, SupplierGauge, Counter
 from pyometer.metric.timer import Timer
 from pyometer.metric_value import MetricValue
 
