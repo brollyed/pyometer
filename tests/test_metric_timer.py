@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from metric.timer import Timer
+from pyometer.metric.timer import Timer
 
 
 class TestMetricTimer(TestCase):

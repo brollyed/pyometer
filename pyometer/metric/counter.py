@@ -1,7 +1,7 @@
 from threading import Lock
 from typing import Any, Dict
 
-from metric import Metric
+from pyometer.metric import Metric
 
 
 class Counter(Metric):
