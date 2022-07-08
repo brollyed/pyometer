@@ -4,6 +4,7 @@ import time
 import urllib.request
 import urllib.parse
 import json
+import re
 from pyometer.metric_registry import MetricRegistry
 from pyometer.metric_value import MetricValue
 from pyometer.reporter import Reporter
@@ -40,7 +41,7 @@ class GrafanaCloudGraphiteReporter(Reporter):
         metric_data = []
         for metric_value in metric_values:
             metric_data.append({
-                "name": self._format_metric_name(metric_value),
+                "name": _format_metric_name(metric_value),
                 "interval": 1,  # TODO
                 "value": metric_value.value,
                 "time": timestamp,
@@ -48,10 +49,6 @@ class GrafanaCloudGraphiteReporter(Reporter):
             })
 
         return json.dumps(metric_data).encode("UTF-8")
-
-    @staticmethod
-    def _format_metric_name(metric_value: MetricValue):
-        return ".".join([str(part) for part in metric_value.key.name])
 
     @staticmethod
     def _format_metric_tags(metric_value: MetricValue):
@@ -69,3 +66,17 @@ class GrafanaCloudGraphiteReporter(Reporter):
                                           "Content-Type": "application/json"
                                       },
                                       data=metric_data)
+
+
+def _format_metric_name(metric_value: MetricValue):
+    return ".".join([_sanitize_metric_name(str(part))
+                     for part in metric_value.key.name])
+
+
+def _sanitize_metric_name(metric_name: str) -> str:
+    # Remove leading and trailing whitespace
+    metric_name = metric_name.strip()
+    # Remove leading and trailing periods; this is a special character in graphite for separating names
+    metric_name = metric_name.strip(".")
+    # Replace internal whitespace and periods with a dash
+    return re.sub(r"[\s.]+", "-", metric_name)
