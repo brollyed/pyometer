@@ -36,3 +36,11 @@ class TestMetricCounter(TestCase):
         self.assertEqual(0, counter.get_count())
         self.assertDictEqual({"count": 0},
                              counter.metric_values())
+
+    def test_set(self):
+        counter = Counter()
+        counter.set(99)
+
+        self.assertEqual(99, counter.get_count())
+        self.assertDictEqual({"count": 99},
+                             counter.metric_values())

@@ -19,9 +19,12 @@ class Counter(Metric):
     def decrement(self, value: int = 1):
         self._change_by(-value)
 
-    def clear(self):
+    def set(self, value: int):
         with self.lock:
-            self.count = 0
+            self.count = value
+
+    def clear(self):
+        self.set(0)
 
     def get_count(self):
         return self.count
