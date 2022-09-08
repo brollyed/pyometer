@@ -43,7 +43,7 @@ class GrafanaCloudGraphiteReporter(Reporter):
         metric_data = []
         for metric_value in metric_values:
             metric_data.append({
-                "name": _format_metric_name(metric_value),
+                "name": _format_metric_name(metric_value.key),
                 "interval": 1,  # TODO
                 "value": metric_value.value,
                 "time": timestamp,
