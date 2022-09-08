@@ -1,10 +1,12 @@
-import logging
-from typing import List, Dict
-import time
-import urllib.request
-import urllib.parse
 import json
+import logging
 import re
+import time
+import urllib.parse
+import urllib.request
+from typing import List, Dict
+
+from pyometer import MetricKey
 from pyometer.metric_registry import MetricRegistry
 from pyometer.metric_value import MetricValue
 from pyometer.reporter import Reporter
@@ -68,9 +70,10 @@ class GrafanaCloudGraphiteReporter(Reporter):
                                       data=metric_data)
 
 
-def _format_metric_name(metric_value: MetricValue):
+def _format_metric_name(metric_key: MetricKey):
+    """Sanitize each part of the metric name and separate by periods."""
     return ".".join([_sanitize_metric_name(str(part))
-                     for part in metric_value.key.name])
+                     for part in metric_key.name])
 
 
 def _sanitize_metric_name(metric_name: str) -> str:
@@ -78,5 +81,8 @@ def _sanitize_metric_name(metric_name: str) -> str:
     metric_name = metric_name.strip()
     # Remove leading and trailing periods; this is a special character in graphite for separating names
     metric_name = metric_name.strip(".")
-    # Replace internal whitespace and periods with a dash
-    return re.sub(r"[\s.]+", "-", metric_name)
+    # Replace anything that is not an alphanumeric, underscore with a hyphen
+    metric_name = re.sub(r"[^0-9a-zA-Z_]+", "-", metric_name)
+    # Remove leading and trailing hyphens
+    metric_name = metric_name.strip("-")
+    return metric_name
